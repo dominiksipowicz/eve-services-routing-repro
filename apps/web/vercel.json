@@ -1,0 +1,147 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "web": {
+      "root": ".",
+      "framework": "nextjs",
+      "installCommand": "bunx bun@1.4.0 install --frozen-lockfile",
+      "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_REF\" in *-journal|*-lock) exit 0 ;; *) exit 1 ;; esac"
+    },
+    "eve-demo": {
+      "root": "agents/demo",
+      "framework": "eve",
+      "buildCommand": "EVE_PUBLIC_ROUTE_PREFIX=/eve/agents/demo eve build",
+      "routes": [
+        {
+          "src": "^/eve/agents/demo/eve/v1/(.*)$",
+          "transforms": [
+            {
+              "type": "request.path",
+              "op": "set",
+              "args": "/eve/v1/$1"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/eve/agents/demo/eve/v1/(.*)",
+      "destination": {
+        "service": "eve-demo"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "web"
+      }
+    }
+  ],
+  "regions": [
+    "fra1"
+  ],
+  "routes": [
+    {
+      "src": "^/(?:(?:.*/)?\\.(?:env|git|aws|ssh|svn|docker|npmrc|htaccess|htpasswd)[^/]*(?:/.*)?|.*\\.(?:php|conf|cfg|ini|sql|bak|old|swp|yml|yaml|pem|key|asp|aspx|jsp|cgi|sh)|(?:.*/)?(?:wp-[^/]*|phpmyadmin|phpinfo|cgi-bin|adminer|xmlrpc)(?:/.*)?)$",
+      "mitigate": {
+        "action": "deny"
+      }
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/report",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/market-report",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-tokens",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/memory-reconcile",
+      "schedule": "15 3 * * *"
+    },
+    {
+      "path": "/api/cron/memory-extraction-sweep",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/concurrent-migrations",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/mrr",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/backfill-creator-stats",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/apple-subscription-backfill",
+      "schedule": "20 3 * * *"
+    },
+    {
+      "path": "/api/cron/backfill-exam-prep-text-layer",
+      "schedule": "45 2 * * *"
+    },
+    {
+      "path": "/api/cron/exam-prep-feedback-daily",
+      "schedule": "10 1 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-feedback",
+      "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/exam-prep-feedback-weekly",
+      "schedule": "10 7 * * 1"
+    },
+    {
+      "path": "/api/cron/mailerlite",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/cleanup-soniox",
+      "schedule": "15 * * * *"
+    },
+    {
+      "path": "/api/cron/study-path-cleanup",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/exam-prep-popularity-cutoffs",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/user-stats-sweep",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/exam-prep-file-stats",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/google-ads-customer-audiences",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/google-ads-all-users-audiences",
+      "schedule": "0 4 * * 1"
+    },
+    {
+      "path": "/api/cron/push-campaigns-watchdog",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/push-deliveries-retention",
+      "schedule": "45 2 * * *"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Mirrors the production monorepo this case was found in: bun workspaces with
+# the isolated linker (node_modules is a tree of symlinks into
+# node_modules/.bun/). The services build path mis-packages Next under this
+# layout — every function crashes at boot with
+# "Cannot find module 'next/setup-node-env'".
+[install]
+linker = "isolated"
+exact = true
+saveTextLockfile = true

@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { sharedLabel } from '@repro/shared';
+import { z } from 'zod';
 
 const APPS = ['sudoku', 'fifteen-puzzle', 'encyclopedia'];
 
@@ -11,10 +13,10 @@ export default async function LabCatalog({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const { locale } = z.object({ locale: z.string() }).parse(await params);
   return (
     <main style={{ fontFamily: 'monospace', padding: 40 }}>
-      <h1>Lab catalog — locale: {locale}</h1>
+      <h1>Lab catalog — locale: {locale} ({sharedLabel()})</h1>
       <p>
         Click a card. Healthy: it opens in a modal over this page. Broken: the
         URL changes and nothing happens.
